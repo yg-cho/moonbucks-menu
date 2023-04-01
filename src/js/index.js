@@ -8,44 +8,41 @@
 //   - [x] 총 메뉴 갯수를 count하여 상단에 보여준다.
 //   - 추가되는 메뉴의 아래 마크업은 `<ul id="espresso-menu-list" class="mt-3 pl-0"></ul>` 안에 삽입해야 한다.
 
-const $ = (selector) => document.querySelector(selector);
-
-function App(){
 // TODO: 메뉴 수정
 // - [ ] 메뉴의 수정 버튼클릭 이벤트를 받고, 메뉴 이름을 업데이트한다.
 // - [ ] 메뉴 수정시 브라우저에서 제공하는 `prompt` 인터페이스를 활용한다.
 
+const $ = (selector) => document.querySelector(selector);
+
+const updatedMenuCount = () => {
+    const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
+    $(".menu-count").innerText = `총 ${menuCount}개`
+}
+
+function App(){
+    
     $("#espresso-menu-list").addEventListener("click", (e) => {
-        
         if(e.target.classList.contains("menu-edit-button")){
             const $menuName = e.target.closest("li").querySelector(".menu-name")
             const updatedMenuName = prompt("메뉴명을 수정하세요",$menuName.innerText)
             $menuName.innerText = updatedMenuName;
         }
-    
+
+        if(e.target.classList.contains("menu-remove-button")){
+            if(confirm("정말 삭제하시겠습니까?")) {
+                e.target.closest("li").remove();
+                updatedMenuCount();
+            }
+        }
     })
   
     $("#espresso-menu-form").addEventListener("submit", (e)=> {
         e.preventDefault();
     })
 
-    $("#espresso-menu-name").addEventListener("keypress", (e) => {
-        if(e.key !== "Enter"){
-            return;
-        }
-        if($("#espresso-menu-name").value === ""){
-            alert("값을 입력해주세요.");
-            return;
-        }
-        if(e.key === "Enter"){
-            addItem();
-        };
-    })
+   
 
-    $("#espresso-menu-submit-button").addEventListener("click", () => {
-        addItem();
-    });
-    
+
 }
 
 const addItem = () => {
@@ -73,13 +70,33 @@ const addItem = () => {
     //position -> 'beforbegin', 'afterbegin', 'beforeend', 'afterend'
     $("#espresso-menu-list").insertAdjacentHTML("beforeend",menuItemTemplate(espressoMenuName))
 
-    const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
-    $(".menu-count").innerText = `총 ${menuCount}개`
+    updatedMenuCount();
     $("#espresso-menu-name").value = "";
 }
-App();
 
+$("#espresso-menu-submit-button").addEventListener("click", () => {
+    addItem();
+});
 
+$("#espresso-menu-name").addEventListener("keypress", (e) => {
+    if(e.key !== "Enter"){
+        return;
+    }
+    if($("#espresso-menu-name").value === ""){
+        alert("값을 입력해주세요.");
+        return;
+    }
+    if(e.key === "Enter"){
+        addItem();
+    };
+})
 
 // TODO: 메뉴 삭제
 // - [ ] 메뉴 삭제시 브라우저에서 제공하는 `confirm` 인터페이스를 활용한다.
+
+
+
+
+
+App();
+
